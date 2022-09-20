@@ -28,22 +28,22 @@ prompt APPLICATION 127411 - Slack Integration
 -- Application Export:
 --   Application:     127411
 --   Name:            Slack Integration
---   Date and Time:   20:16 Monday September 19, 2022
+--   Date and Time:   08:58 Tuesday September 20, 2022
 --   Exported By:     MOREAUX.LOUIS@GMAIL.COM
 --   Flashback:       0
 --   Export Type:     Application Export
---     Pages:                      4
---       Items:                    5
+--     Pages:                      5
+--       Items:                    6
 --       Processes:                5
---       Regions:                  4
---       Buttons:                  2
+--       Regions:                  6
+--       Buttons:                  3
 --     Shared Components:
 --       Logic:
 --         Build Options:          1
 --       Navigation:
 --         Lists:                  2
 --         Breadcrumbs:            1
---           Entries:              2
+--           Entries:              3
 --       Security:
 --         Authentication:         1
 --         Authorization:          1
@@ -110,7 +110,7 @@ wwv_flow_imp.create_flow(
 ,p_substitution_string_01=>'APP_NAME'
 ,p_substitution_value_01=>'Slack Integration'
 ,p_last_updated_by=>'MOREAUX.LOUIS@GMAIL.COM'
-,p_last_upd_yyyymmddhh24miss=>'20220915120553'
+,p_last_upd_yyyymmddhh24miss=>'20220920081748'
 ,p_file_prefix => nvl(wwv_flow_application_install.get_static_app_file_prefix,'')
 ,p_files_version=>4
 ,p_ui_type_name => null
@@ -143,6 +143,15 @@ wwv_flow_imp_shared.create_list_item(
 ,p_list_item_icon=>'fa-file-o'
 ,p_list_item_current_type=>'COLON_DELIMITED_PAGE_LIST'
 ,p_list_item_current_for_pages=>'2'
+);
+wwv_flow_imp_shared.create_list_item(
+ p_id=>wwv_flow_imp.id(50763083967216615764)
+,p_list_item_display_sequence=>30
+,p_list_item_link_text=>'API'
+,p_list_item_link_target=>'f?p=&APP_ID.:3:&APP_SESSION.::&DEBUG.:::'
+,p_list_item_icon=>'fa-file-o'
+,p_list_item_current_type=>'COLON_DELIMITED_PAGE_LIST'
+,p_list_item_current_for_pages=>'3'
 );
 end;
 /
@@ -517,6 +526,12 @@ wwv_flow_imp_shared.create_menu_option(
 ,p_short_name=>'Incoming Webhook'
 ,p_link=>'f?p=&APP_ID.:2:&APP_SESSION.::&DEBUG.:::'
 ,p_page_id=>2
+);
+wwv_flow_imp_shared.create_menu_option(
+ p_id=>wwv_flow_imp.id(50763084865651615765)
+,p_short_name=>'API'
+,p_link=>'f?p=&APP_ID.:3:&APP_SESSION.::&DEBUG.:::'
+,p_page_id=>3
 );
 end;
 /
@@ -13961,7 +13976,7 @@ wwv_flow_imp_page.create_page(
 ,p_protection_level=>'C'
 ,p_page_component_map=>'16'
 ,p_last_updated_by=>'MOREAUX.LOUIS@GMAIL.COM'
-,p_last_upd_yyyymmddhh24miss=>'20220915120553'
+,p_last_upd_yyyymmddhh24miss=>'20220920081748'
 );
 wwv_flow_imp_page.create_page_plug(
  p_id=>wwv_flow_imp.id(46047967115824606534)
@@ -14042,6 +14057,7 @@ wwv_flow_imp_page.create_page_process(
 '    l_text := replace(:P2_TEXT, ''**'', ''*'');',
 '    l_text := replace(l_text, chr(10), ''\n'');',
 '    l_text := replace(l_text, chr(13), ''\r'');',
+'    l_text := regexp_replace(l_text, ''^```[a-z]{1,}'', ''```'');',
 '    apex_web_service.clear_request_headers;',
 '',
 '    apex_web_service.set_request_headers(',
@@ -14060,6 +14076,73 @@ wwv_flow_imp_page.create_page_process(
 ,p_error_display_location=>'INLINE_IN_NOTIFICATION'
 ,p_process_when_button_id=>wwv_flow_imp.id(46047967556967606538)
 ,p_process_success_message=>'Message send.'
+);
+end;
+/
+prompt --application/pages/page_00003
+begin
+wwv_flow_imp_page.create_page(
+ p_id=>3
+,p_user_interface_id=>wwv_flow_imp.id(49030321967336404085)
+,p_name=>'API'
+,p_alias=>'API'
+,p_step_title=>'API'
+,p_autocomplete_on_off=>'OFF'
+,p_page_template_options=>'#DEFAULT#'
+,p_protection_level=>'C'
+,p_page_component_map=>'17'
+,p_last_updated_by=>'MOREAUX.LOUIS@GMAIL.COM'
+,p_last_upd_yyyymmddhh24miss=>'20220919204933'
+);
+wwv_flow_imp_page.create_page_plug(
+ p_id=>wwv_flow_imp.id(50763084492938615765)
+,p_plug_name=>'Breadcrumb'
+,p_region_template_options=>'#DEFAULT#:t-BreadcrumbRegion--useBreadcrumbTitle'
+,p_component_template_options=>'#DEFAULT#'
+,p_plug_template=>wwv_flow_imp.id(49030236461500404047)
+,p_plug_display_sequence=>10
+,p_plug_display_point=>'REGION_POSITION_01'
+,p_menu_id=>wwv_flow_imp.id(49030126945246404000)
+,p_plug_source_type=>'NATIVE_BREADCRUMB'
+,p_menu_template_id=>wwv_flow_imp.id(49030298552630404074)
+);
+wwv_flow_imp_page.create_page_plug(
+ p_id=>wwv_flow_imp.id(96811359237175951832)
+,p_plug_name=>'API'
+,p_region_template_options=>'#DEFAULT#:t-Region--scrollBody'
+,p_plug_template=>wwv_flow_imp.id(49030224051961404042)
+,p_plug_display_sequence=>20
+,p_include_in_reg_disp_sel_yn=>'Y'
+,p_plug_query_options=>'DERIVED_REPORT_COLUMNS'
+,p_attribute_01=>'N'
+,p_attribute_02=>'HTML'
+);
+wwv_flow_imp_page.create_page_button(
+ p_id=>wwv_flow_imp.id(50763392428433345299)
+,p_button_sequence=>30
+,p_button_plug_id=>wwv_flow_imp.id(96811359237175951832)
+,p_button_name=>'SEND'
+,p_button_action=>'SUBMIT'
+,p_button_template_options=>'#DEFAULT#:t-Button--iconLeft'
+,p_button_template_id=>wwv_flow_imp.id(49030297005746404073)
+,p_button_is_hot=>'Y'
+,p_button_image_alt=>'Send'
+,p_button_position=>'CREATE'
+,p_icon_css_classes=>'fa-send-o'
+);
+wwv_flow_imp_page.create_page_item(
+ p_id=>wwv_flow_imp.id(50763393209757345300)
+,p_name=>'P3_TEXT'
+,p_item_sequence=>20
+,p_item_plug_id=>wwv_flow_imp.id(96811359237175951832)
+,p_prompt=>'Text'
+,p_display_as=>'NATIVE_RICH_TEXT_EDITOR'
+,p_cSize=>30
+,p_cHeight=>5
+,p_field_template=>wwv_flow_imp.id(49030294414949404072)
+,p_item_template_options=>'#DEFAULT#'
+,p_attribute_07=>'180'
+,p_attribute_09=>'MARKDOWN'
 );
 end;
 /
