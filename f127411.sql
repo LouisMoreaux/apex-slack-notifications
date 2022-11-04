@@ -5,16 +5,16 @@ whenever sqlerror exit sql.sqlcode rollback
 --
 -- Oracle APEX export file
 --
--- You should run the script connected to SQL*Plus as the Oracle user
--- APEX_220100 or as the owner (parsing schema) of the application.
+-- You should run the script connected to SQL*Plus as the owner (parsing schema)
+-- of the application.
 --
 -- NOTE: Calls to apex_application_install override the defaults below.
 --
 --------------------------------------------------------------------------------
 begin
 wwv_flow_imp.import_begin (
- p_version_yyyy_mm_dd=>'2022.04.12'
-,p_release=>'22.1.3'
+ p_version_yyyy_mm_dd=>'2022.10.07'
+,p_release=>'22.2.0-19'
 ,p_default_workspace_id=>22914957980901228278
 ,p_default_application_id=>127411
 ,p_default_id_offset=>0
@@ -28,13 +28,13 @@ prompt APPLICATION 127411 - Slack Integration
 -- Application Export:
 --   Application:     127411
 --   Name:            Slack Integration
---   Date and Time:   08:58 Tuesday September 20, 2022
+--   Date and Time:   08:13 Friday November 4, 2022
 --   Exported By:     MOREAUX.LOUIS@GMAIL.COM
 --   Flashback:       0
 --   Export Type:     Application Export
 --     Pages:                      5
---       Items:                    6
---       Processes:                5
+--       Items:                    7
+--       Processes:                6
 --       Regions:                  6
 --       Buttons:                  3
 --     Shared Components:
@@ -59,11 +59,13 @@ prompt APPLICATION 127411 - Slack Integration
 --           Breadcrumb:           1
 --           Button:               3
 --           Report:              12
+--         LOVs:                   1
+--       PWA:
 --       Globalization:
 --       Reports:
 --       E-Mail:
 --     Supporting Objects:  Included
---   Version:         22.1.3
+--   Version:         22.2.0-19
 --   Instance ID:     63113759365424
 --
 
@@ -110,13 +112,392 @@ wwv_flow_imp.create_flow(
 ,p_substitution_string_01=>'APP_NAME'
 ,p_substitution_value_01=>'Slack Integration'
 ,p_last_updated_by=>'MOREAUX.LOUIS@GMAIL.COM'
-,p_last_upd_yyyymmddhh24miss=>'20220920081748'
+,p_last_upd_yyyymmddhh24miss=>'20221004113131'
 ,p_file_prefix => nvl(wwv_flow_application_install.get_static_app_file_prefix,'')
 ,p_files_version=>4
-,p_ui_type_name => null
 ,p_print_server_type=>'INSTANCE'
 ,p_is_pwa=>'Y'
 ,p_pwa_is_installable=>'N'
+);
+end;
+/
+prompt --application/user_interfaces
+begin
+wwv_flow_imp_shared.create_user_interface(
+ p_id=>wwv_flow_imp.id(127411)
+,p_theme_id=>42
+,p_home_url=>'f?p=&APP_ID.:1:&SESSION.'
+,p_login_url=>'f?p=&APP_ID.:LOGIN:&APP_SESSION.::&DEBUG.:::'
+,p_theme_style_by_user_pref=>false
+,p_built_with_love=>false
+,p_global_page_id=>0
+,p_navigation_list_id=>wwv_flow_imp.id(49030127469075404001)
+,p_navigation_list_position=>'SIDE'
+,p_navigation_list_template_id=>wwv_flow_imp.id(49030284756236404067)
+,p_nav_list_template_options=>'#DEFAULT#:t-TreeNav--styleA:js-navCollapsed--hidden'
+,p_nav_bar_type=>'LIST'
+,p_nav_bar_list_id=>wwv_flow_imp.id(49030321613639404085)
+,p_nav_bar_list_template_id=>wwv_flow_imp.id(49030284314888404067)
+,p_nav_bar_template_options=>'#DEFAULT#'
+);
+end;
+/
+prompt --workspace/credentials/credentials_for_slack
+begin
+wwv_imp_workspace.create_credential(
+ p_id=>wwv_flow_imp.id(52695087164431933735)
+,p_name=>'Credentials for Slack'
+,p_static_id=>'Credentials_for_Slack'
+,p_authentication_type=>'HTTP_HEADER'
+,p_valid_for_urls=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'https://slack.com/',
+''))
+,p_prompt_on_install=>true
+);
+end;
+/
+prompt --workspace/remote_servers/slack_com_2
+begin
+wwv_imp_workspace.create_remote_server(
+ p_id=>wwv_flow_imp.id(52697075993303719953)
+,p_name=>'slack-com (2)'
+,p_static_id=>'slack_com__2_'
+,p_base_url=>nvl(wwv_flow_application_install.get_remote_server_base_url('slack_com__2_'),'https://slack.com')
+,p_https_host=>nvl(wwv_flow_application_install.get_remote_server_https_host('slack_com__2_'),'')
+,p_server_type=>'WEB_SERVICE'
+,p_ords_timezone=>nvl(wwv_flow_application_install.get_remote_server_ords_tz('slack_com__2_'),'')
+,p_remote_sql_default_schema=>nvl(wwv_flow_application_install.get_remote_server_default_db('slack_com__2_'),'')
+,p_mysql_sql_modes=>nvl(wwv_flow_application_install.get_remote_server_sql_mode('slack_com__2_'),'')
+,p_prompt_on_install=>false
+);
+end;
+/
+prompt --application/shared_components/data_profiles/slack_conversations
+begin
+wwv_flow_imp_shared.create_data_profile(
+ p_id=>wwv_flow_imp.id(52697076155267719953)
+,p_name=>'Slack Conversations'
+,p_format=>'JSON'
+,p_row_selector=>'channels'
+);
+wwv_flow_imp_shared.create_data_profile_col(
+ p_id=>wwv_flow_imp.id(52697076366164719953)
+,p_data_profile_id=>wwv_flow_imp.id(52697076155267719953)
+,p_name=>'ID'
+,p_sequence=>1
+,p_column_type=>'DATA'
+,p_data_type=>'VARCHAR2'
+,p_max_length=>4000
+,p_has_time_zone=>false
+,p_selector=>'id'
+);
+wwv_flow_imp_shared.create_data_profile_col(
+ p_id=>wwv_flow_imp.id(52697076666928719954)
+,p_data_profile_id=>wwv_flow_imp.id(52697076155267719953)
+,p_name=>'NAME'
+,p_sequence=>2
+,p_column_type=>'DATA'
+,p_data_type=>'VARCHAR2'
+,p_max_length=>4000
+,p_has_time_zone=>false
+,p_selector=>'name'
+);
+wwv_flow_imp_shared.create_data_profile_col(
+ p_id=>wwv_flow_imp.id(52697076991214719954)
+,p_data_profile_id=>wwv_flow_imp.id(52697076155267719953)
+,p_name=>'IS_IM'
+,p_sequence=>3
+,p_column_type=>'DATA'
+,p_data_type=>'VARCHAR2'
+,p_max_length=>4000
+,p_has_time_zone=>false
+,p_selector=>'is_im'
+);
+wwv_flow_imp_shared.create_data_profile_col(
+ p_id=>wwv_flow_imp.id(52697077249737719954)
+,p_data_profile_id=>wwv_flow_imp.id(52697076155267719953)
+,p_name=>'VALUE'
+,p_sequence=>4
+,p_column_type=>'DATA'
+,p_data_type=>'VARCHAR2'
+,p_max_length=>4000
+,p_has_time_zone=>false
+,p_selector=>'topic.value'
+);
+wwv_flow_imp_shared.create_data_profile_col(
+ p_id=>wwv_flow_imp.id(52697077589213719954)
+,p_data_profile_id=>wwv_flow_imp.id(52697076155267719953)
+,p_name=>'CREATOR'
+,p_sequence=>5
+,p_column_type=>'DATA'
+,p_data_type=>'VARCHAR2'
+,p_max_length=>4000
+,p_has_time_zone=>false
+,p_selector=>'topic.creator'
+);
+wwv_flow_imp_shared.create_data_profile_col(
+ p_id=>wwv_flow_imp.id(52697077878399719954)
+,p_data_profile_id=>wwv_flow_imp.id(52697076155267719953)
+,p_name=>'LAST_SET'
+,p_sequence=>6
+,p_column_type=>'DATA'
+,p_data_type=>'NUMBER'
+,p_has_time_zone=>false
+,p_selector=>'topic.last_set'
+);
+wwv_flow_imp_shared.create_data_profile_col(
+ p_id=>wwv_flow_imp.id(52697078149984719954)
+,p_data_profile_id=>wwv_flow_imp.id(52697076155267719953)
+,p_name=>'CREATED'
+,p_sequence=>7
+,p_column_type=>'DATA'
+,p_data_type=>'NUMBER'
+,p_has_time_zone=>false
+,p_selector=>'created'
+);
+wwv_flow_imp_shared.create_data_profile_col(
+ p_id=>wwv_flow_imp.id(52697078470249719954)
+,p_data_profile_id=>wwv_flow_imp.id(52697076155267719953)
+,p_name=>'CREATOR2'
+,p_sequence=>8
+,p_column_type=>'DATA'
+,p_data_type=>'VARCHAR2'
+,p_max_length=>4000
+,p_has_time_zone=>false
+,p_selector=>'creator'
+);
+wwv_flow_imp_shared.create_data_profile_col(
+ p_id=>wwv_flow_imp.id(52697078702594719955)
+,p_data_profile_id=>wwv_flow_imp.id(52697076155267719953)
+,p_name=>'IS_MPIM'
+,p_sequence=>9
+,p_column_type=>'DATA'
+,p_data_type=>'VARCHAR2'
+,p_max_length=>4000
+,p_has_time_zone=>false
+,p_selector=>'is_mpim'
+);
+wwv_flow_imp_shared.create_data_profile_col(
+ p_id=>wwv_flow_imp.id(52697079042778719955)
+,p_data_profile_id=>wwv_flow_imp.id(52697076155267719953)
+,p_name=>'VALUE2'
+,p_sequence=>10
+,p_column_type=>'DATA'
+,p_data_type=>'VARCHAR2'
+,p_max_length=>4000
+,p_has_time_zone=>false
+,p_selector=>'purpose.value'
+);
+wwv_flow_imp_shared.create_data_profile_col(
+ p_id=>wwv_flow_imp.id(52697079355800719955)
+,p_data_profile_id=>wwv_flow_imp.id(52697076155267719953)
+,p_name=>'CREATOR3'
+,p_sequence=>11
+,p_column_type=>'DATA'
+,p_data_type=>'VARCHAR2'
+,p_max_length=>4000
+,p_has_time_zone=>false
+,p_selector=>'purpose.creator'
+);
+wwv_flow_imp_shared.create_data_profile_col(
+ p_id=>wwv_flow_imp.id(52697079612307719955)
+,p_data_profile_id=>wwv_flow_imp.id(52697076155267719953)
+,p_name=>'LAST_SET2'
+,p_sequence=>12
+,p_column_type=>'DATA'
+,p_data_type=>'NUMBER'
+,p_has_time_zone=>false
+,p_selector=>'purpose.last_set'
+);
+wwv_flow_imp_shared.create_data_profile_col(
+ p_id=>wwv_flow_imp.id(52697079982468719955)
+,p_data_profile_id=>wwv_flow_imp.id(52697076155267719953)
+,p_name=>'IS_GROUP'
+,p_sequence=>13
+,p_column_type=>'DATA'
+,p_data_type=>'VARCHAR2'
+,p_max_length=>4000
+,p_has_time_zone=>false
+,p_selector=>'is_group'
+);
+wwv_flow_imp_shared.create_data_profile_col(
+ p_id=>wwv_flow_imp.id(52697080289756719955)
+,p_data_profile_id=>wwv_flow_imp.id(52697076155267719953)
+,p_name=>'UNLINKED'
+,p_sequence=>14
+,p_column_type=>'DATA'
+,p_data_type=>'NUMBER'
+,p_has_time_zone=>false
+,p_selector=>'unlinked'
+);
+wwv_flow_imp_shared.create_data_profile_col(
+ p_id=>wwv_flow_imp.id(52697080516376719955)
+,p_data_profile_id=>wwv_flow_imp.id(52697076155267719953)
+,p_name=>'IS_MEMBER'
+,p_sequence=>15
+,p_column_type=>'DATA'
+,p_data_type=>'VARCHAR2'
+,p_max_length=>4000
+,p_has_time_zone=>false
+,p_selector=>'is_member'
+);
+wwv_flow_imp_shared.create_data_profile_col(
+ p_id=>wwv_flow_imp.id(52697080867459719955)
+,p_data_profile_id=>wwv_flow_imp.id(52697076155267719953)
+,p_name=>'IS_SHARED'
+,p_sequence=>16
+,p_column_type=>'DATA'
+,p_data_type=>'VARCHAR2'
+,p_max_length=>4000
+,p_has_time_zone=>false
+,p_selector=>'is_shared'
+);
+wwv_flow_imp_shared.create_data_profile_col(
+ p_id=>wwv_flow_imp.id(52697081109978719955)
+,p_data_profile_id=>wwv_flow_imp.id(52697076155267719953)
+,p_name=>'IS_CHANNEL'
+,p_sequence=>17
+,p_column_type=>'DATA'
+,p_data_type=>'VARCHAR2'
+,p_max_length=>4000
+,p_has_time_zone=>false
+,p_selector=>'is_channel'
+);
+wwv_flow_imp_shared.create_data_profile_col(
+ p_id=>wwv_flow_imp.id(52697081447255719955)
+,p_data_profile_id=>wwv_flow_imp.id(52697076155267719953)
+,p_name=>'IS_GENERAL'
+,p_sequence=>18
+,p_column_type=>'DATA'
+,p_data_type=>'VARCHAR2'
+,p_max_length=>4000
+,p_has_time_zone=>false
+,p_selector=>'is_general'
+);
+wwv_flow_imp_shared.create_data_profile_col(
+ p_id=>wwv_flow_imp.id(52697081730485719955)
+,p_data_profile_id=>wwv_flow_imp.id(52697076155267719953)
+,p_name=>'IS_PRIVATE'
+,p_sequence=>19
+,p_column_type=>'DATA'
+,p_data_type=>'VARCHAR2'
+,p_max_length=>4000
+,p_has_time_zone=>false
+,p_selector=>'is_private'
+);
+wwv_flow_imp_shared.create_data_profile_col(
+ p_id=>wwv_flow_imp.id(52697082050766719956)
+,p_data_profile_id=>wwv_flow_imp.id(52697076155267719953)
+,p_name=>'IS_ARCHIVED'
+,p_sequence=>20
+,p_column_type=>'DATA'
+,p_data_type=>'VARCHAR2'
+,p_max_length=>4000
+,p_has_time_zone=>false
+,p_selector=>'is_archived'
+);
+wwv_flow_imp_shared.create_data_profile_col(
+ p_id=>wwv_flow_imp.id(52697082378430719956)
+,p_data_profile_id=>wwv_flow_imp.id(52697076155267719953)
+,p_name=>'NUM_MEMBERS'
+,p_sequence=>21
+,p_column_type=>'DATA'
+,p_data_type=>'NUMBER'
+,p_has_time_zone=>false
+,p_selector=>'num_members'
+);
+wwv_flow_imp_shared.create_data_profile_col(
+ p_id=>wwv_flow_imp.id(52697082674199719956)
+,p_data_profile_id=>wwv_flow_imp.id(52697076155267719953)
+,p_name=>'IS_EXT_SHARED'
+,p_sequence=>22
+,p_column_type=>'DATA'
+,p_data_type=>'VARCHAR2'
+,p_max_length=>4000
+,p_has_time_zone=>false
+,p_selector=>'is_ext_shared'
+);
+wwv_flow_imp_shared.create_data_profile_col(
+ p_id=>wwv_flow_imp.id(52697082997395719956)
+,p_data_profile_id=>wwv_flow_imp.id(52697076155267719953)
+,p_name=>'IS_ORG_SHARED'
+,p_sequence=>23
+,p_column_type=>'DATA'
+,p_data_type=>'VARCHAR2'
+,p_max_length=>4000
+,p_has_time_zone=>false
+,p_selector=>'is_org_shared'
+);
+wwv_flow_imp_shared.create_data_profile_col(
+ p_id=>wwv_flow_imp.id(52697083205108719956)
+,p_data_profile_id=>wwv_flow_imp.id(52697076155267719953)
+,p_name=>'CONTEXT_TEAM_ID'
+,p_sequence=>24
+,p_column_type=>'DATA'
+,p_data_type=>'VARCHAR2'
+,p_max_length=>4000
+,p_has_time_zone=>false
+,p_selector=>'context_team_id'
+);
+wwv_flow_imp_shared.create_data_profile_col(
+ p_id=>wwv_flow_imp.id(52697083558149719956)
+,p_data_profile_id=>wwv_flow_imp.id(52697076155267719953)
+,p_name=>'NAME_NORMALIZED'
+,p_sequence=>25
+,p_column_type=>'DATA'
+,p_data_type=>'VARCHAR2'
+,p_max_length=>4000
+,p_has_time_zone=>false
+,p_selector=>'name_normalized'
+);
+wwv_flow_imp_shared.create_data_profile_col(
+ p_id=>wwv_flow_imp.id(52697083885682719956)
+,p_data_profile_id=>wwv_flow_imp.id(52697076155267719953)
+,p_name=>'PARENT_CONVERSATION'
+,p_sequence=>26
+,p_column_type=>'DATA'
+,p_data_type=>'VARCHAR2'
+,p_max_length=>4000
+,p_has_time_zone=>false
+,p_selector=>'parent_conversation'
+);
+wwv_flow_imp_shared.create_data_profile_col(
+ p_id=>wwv_flow_imp.id(52697084173732719956)
+,p_data_profile_id=>wwv_flow_imp.id(52697076155267719953)
+,p_name=>'IS_PENDING_EXT_SHARED'
+,p_sequence=>27
+,p_column_type=>'DATA'
+,p_data_type=>'VARCHAR2'
+,p_max_length=>4000
+,p_has_time_zone=>false
+,p_selector=>'is_pending_ext_shared'
+);
+end;
+/
+prompt --application/shared_components/web_sources/slack_conversations
+begin
+wwv_flow_imp_shared.create_web_source_module(
+ p_id=>wwv_flow_imp.id(52697084457020719956)
+,p_name=>'Slack Conversations'
+,p_static_id=>'Slack_Conversations'
+,p_web_source_type=>'NATIVE_HTTP'
+,p_data_profile_id=>wwv_flow_imp.id(52697076155267719953)
+,p_remote_server_id=>wwv_flow_imp.id(52697075993303719953)
+,p_url_path_prefix=>'/api/conversations.list'
+,p_credential_id=>wwv_flow_imp.id(52695087164431933735)
+,p_attribute_05=>'1'
+,p_attribute_08=>'OFFSET'
+,p_attribute_10=>'EQUALS'
+,p_attribute_11=>'true'
+);
+wwv_flow_imp_shared.create_web_source_operation(
+ p_id=>wwv_flow_imp.id(52697084680777719957)
+,p_web_src_module_id=>wwv_flow_imp.id(52697084457020719956)
+,p_operation=>'GET'
+,p_database_operation=>'FETCH_COLLECTION'
+,p_url_pattern=>'.'
+,p_force_error_for_http_404=>false
+,p_allow_fetch_all_rows=>false
 );
 end;
 /
@@ -392,6 +773,21 @@ end;
 prompt --application/plugin_settings
 begin
 wwv_flow_imp_shared.create_plugin_setting(
+ p_id=>wwv_flow_imp.id(9382606475892110)
+,p_plugin_type=>'REGION TYPE'
+,p_plugin=>'NATIVE_MAP_REGION'
+,p_attribute_01=>'Y'
+);
+wwv_flow_imp_shared.create_plugin_setting(
+ p_id=>wwv_flow_imp.id(24109899376076917)
+,p_plugin_type=>'ITEM TYPE'
+,p_plugin=>'NATIVE_DATE_PICKER_APEX'
+,p_attribute_01=>'MONTH-PICKER:YEAR-PICKER'
+,p_attribute_02=>'VISIBLE'
+,p_attribute_03=>'15'
+,p_attribute_04=>'FOCUS'
+);
+wwv_flow_imp_shared.create_plugin_setting(
  p_id=>wwv_flow_imp.id(49030123379284403999)
 ,p_plugin_type=>'ITEM TYPE'
 ,p_plugin=>'NATIVE_COLOR_PICKER'
@@ -418,12 +814,6 @@ wwv_flow_imp_shared.create_plugin_setting(
 ,p_attribute_06=>'LIST'
 );
 wwv_flow_imp_shared.create_plugin_setting(
- p_id=>wwv_flow_imp.id(49030124222258403999)
-,p_plugin_type=>'ITEM TYPE'
-,p_plugin=>'NATIVE_RICH_TEXT_EDITOR'
-,p_attribute_01=>'Y'
-);
-wwv_flow_imp_shared.create_plugin_setting(
  p_id=>wwv_flow_imp.id(49030124568073403999)
 ,p_plugin_type=>'ITEM TYPE'
 ,p_plugin=>'NATIVE_SINGLE_CHECKBOX'
@@ -444,11 +834,6 @@ wwv_flow_imp_shared.create_plugin_setting(
 ,p_attribute_01=>'Y'
 ,p_attribute_03=>'N'
 ,p_attribute_05=>'SWITCH_CB'
-);
-wwv_flow_imp_shared.create_plugin_setting(
- p_id=>wwv_flow_imp.id(49030125494394404000)
-,p_plugin_type=>'REGION TYPE'
-,p_plugin=>'NATIVE_CSS_CALENDAR'
 );
 wwv_flow_imp_shared.create_plugin_setting(
  p_id=>wwv_flow_imp.id(49030125791585404000)
@@ -494,6 +879,20 @@ end;
 prompt --application/shared_components/navigation/tabs/parent
 begin
 null;
+end;
+/
+prompt --application/shared_components/user_interface/lovs/slack_channels
+begin
+wwv_flow_imp_shared.create_list_of_values(
+ p_id=>wwv_flow_imp.id(52697832185252759590)
+,p_lov_name=>'SLACK_CHANNELS'
+,p_location=>'WEB_SOURCE'
+,p_web_src_module_id=>wwv_flow_imp.id(52697084457020719956)
+,p_return_column_name=>'ID'
+,p_display_column_name=>'NAME'
+,p_default_sort_column_name=>'NAME'
+,p_default_sort_direction=>'ASC'
+);
 end;
 /
 prompt --application/pages/page_groups
@@ -1051,8 +1450,8 @@ wwv_flow_imp_shared.create_template(
 '  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>',
 '</head>',
 '<body class="t-PageBody t-PageBody--showLeft no-anim t-PageTemplate--leftRightCol #PAGE_CSS_CLASSES#" #TEXT_DIRECTION# #ONLOAD# id="t_PageBody">',
-'<script>(sessionStorage.getItem("right.&APP_ID..&APP_PAGE_ID..preferenceForExpanded") === "true") ? document.getElementById(''t_PageBody'').classList.add(''js-rightExpanded'') : document.getElementById(''t_PageBody'').classList.add(''js-rightCollapsed'')</sc'
-||'ript>',
+'<script>(sessionStorage.getItem("ORA_WWV_apex.toggleCore.right.&APP_ID..&APP_PAGE_ID..preferenceForExpanded") === "true") ? document.getElementById(''t_PageBody'').classList.add(''js-rightExpanded'') : document.getElementById(''t_PageBody'').classList.add('
+||'''js-rightCollapsed'')</script>',
 '<a href="#main" id="t_Body_skipToContent">&APP_TEXT$UI_PAGE_SKIP_TO_CONTENT.</a>',
 '#FORM_OPEN#',
 '<header class="t-Header" id="t_Header" role="banner">',
@@ -1563,8 +1962,8 @@ wwv_flow_imp_shared.create_template(
 '  <meta name="viewport" content="width=device-width, initial-scale=1.0" />',
 '</head>',
 '<body class="t-PageBody t-PageBody--masterDetail t-PageBody--hideLeft no-anim t-PageTemplate--marquee #PAGE_CSS_CLASSES#" #TEXT_DIRECTION# #ONLOAD# id="t_PageBody">',
-'<script>(sessionStorage.getItem("right.&APP_ID..&APP_PAGE_ID..preferenceForExpanded") === "true") ? document.getElementById(''t_PageBody'').classList.add(''js-rightExpanded'') : document.getElementById(''t_PageBody'').classList.add(''js-rightCollapsed'')</sc'
-||'ript>',
+'<script>(sessionStorage.getItem("ORA_WWV_apex.toggleCore.right.&APP_ID..&APP_PAGE_ID..preferenceForExpanded") === "true") ? document.getElementById(''t_PageBody'').classList.add(''js-rightExpanded'') : document.getElementById(''t_PageBody'').classList.add('
+||'''js-rightCollapsed'')</script>',
 '<a href="#main" id="t_Body_skipToContent">&APP_TEXT$UI_PAGE_SKIP_TO_CONTENT.</a>',
 '#FORM_OPEN#',
 '<header class="t-Header" id="t_Header" role="banner">',
@@ -2365,8 +2764,8 @@ wwv_flow_imp_shared.create_template(
 '  <meta name="viewport" content="width=device-width, initial-scale=1.0" />',
 '</head>',
 '<body class="t-PageBody t-PageBody--hideLeft no-anim t-PageTemplate--rightSideCol #PAGE_CSS_CLASSES#" #TEXT_DIRECTION# #ONLOAD# id="t_PageBody">',
-'<script>(sessionStorage.getItem("right.&APP_ID..&APP_PAGE_ID..preferenceForExpanded") === "true") ? document.getElementById(''t_PageBody'').classList.add(''js-rightExpanded'') : document.getElementById(''t_PageBody'').classList.add(''js-rightCollapsed'')</sc'
-||'ript>',
+'<script>(sessionStorage.getItem("ORA_WWV_apex.toggleCore.right.&APP_ID..&APP_PAGE_ID..preferenceForExpanded") === "true") ? document.getElementById(''t_PageBody'').classList.add(''js-rightExpanded'') : document.getElementById(''t_PageBody'').classList.add('
+||'''js-rightCollapsed'')</script>',
 '<a href="#main" id="t_Body_skipToContent">&APP_TEXT$UI_PAGE_SKIP_TO_CONTENT.</a>',
 '#FORM_OPEN#',
 '<header class="t-Header" id="t_Header" role="banner">',
@@ -5517,8 +5916,8 @@ wwv_flow_imp_shared.create_list_template(
 '    </ul>',
 '  </div>',
 '</div>',
-'<script>(sessionStorage.getItem("nav.&APP_ID..preferenceForExpanded") === "true" && window.matchMedia("(min-width: " + getComputedStyle(document.documentElement).getPropertyValue("--js-mq-lg") + ")").matches) && document.getElementById(''t_PageBody'').'
-||'classList.add(''js-navExpanded'');</script>',
+'<script>(sessionStorage.getItem("ORA_WWV_apex.toggleCore.nav.&APP_ID..preferenceForExpanded") === "true" && window.matchMedia("(min-width: " + getComputedStyle(document.documentElement).getPropertyValue("--js-mq-lg") + ")").matches) && document.getEl'
+||'ementById(''t_PageBody'').classList.add(''js-navExpanded'');</script>',
 '<script>',
 '    const labels = document.querySelectorAll(".a-TreeView .a-TreeView-label");',
 '    for (const label of labels) {',
@@ -7005,7 +7404,6 @@ wwv_flow_imp_shared.create_theme(
 ,p_theme_id=>42
 ,p_theme_name=>'Universal Theme'
 ,p_theme_internal_name=>'UNIVERSAL_THEME'
-,p_ui_type_name=>'DESKTOP'
 ,p_navigation_type=>'L'
 ,p_nav_bar_type=>'LIST'
 ,p_reference_id=>4070917134413059350
@@ -7040,8 +7438,6 @@ wwv_flow_imp_shared.create_theme(
 ,p_default_dialogr_template=>wwv_flow_imp.id(49030163601437404017)
 ,p_default_option_label=>wwv_flow_imp.id(49030294414949404072)
 ,p_default_required_label=>wwv_flow_imp.id(49030295770943404072)
-,p_default_page_transition=>'NONE'
-,p_default_popup_transition=>'NONE'
 ,p_default_navbar_list_template=>wwv_flow_imp.id(49030284314888404067)
 ,p_file_prefix => nvl(wwv_flow_application_install.get_static_theme_file_prefix(42),'#APEX_FILES#themes/theme_42/22.1/')
 ,p_files_version=>64
@@ -13885,32 +14281,6 @@ wwv_flow_imp_shared.create_authentication(
 );
 end;
 /
-prompt --application/user_interfaces
-begin
-wwv_flow_imp_shared.create_user_interface(
- p_id=>wwv_flow_imp.id(49030321967336404085)
-,p_ui_type_name=>'DESKTOP'
-,p_display_name=>'Desktop'
-,p_display_seq=>10
-,p_use_auto_detect=>false
-,p_is_default=>true
-,p_theme_id=>42
-,p_home_url=>'f?p=&APP_ID.:1:&SESSION.'
-,p_login_url=>'f?p=&APP_ID.:LOGIN:&APP_SESSION.::&DEBUG.:::'
-,p_theme_style_by_user_pref=>false
-,p_built_with_love=>false
-,p_global_page_id=>0
-,p_navigation_list_id=>wwv_flow_imp.id(49030127469075404001)
-,p_navigation_list_position=>'SIDE'
-,p_navigation_list_template_id=>wwv_flow_imp.id(49030284756236404067)
-,p_nav_list_template_options=>'#DEFAULT#:t-TreeNav--styleA:js-navCollapsed--hidden'
-,p_nav_bar_type=>'LIST'
-,p_nav_bar_list_id=>wwv_flow_imp.id(49030321613639404085)
-,p_nav_bar_list_template_id=>wwv_flow_imp.id(49030284314888404067)
-,p_nav_bar_template_options=>'#DEFAULT#'
-);
-end;
-/
 prompt --application/user_interfaces/combined_files
 begin
 null;
@@ -13920,7 +14290,6 @@ prompt --application/pages/page_00000
 begin
 wwv_flow_imp_page.create_page(
  p_id=>0
-,p_user_interface_id=>wwv_flow_imp.id(49030321967336404085)
 ,p_name=>'Global Page'
 ,p_step_title=>'Global Page'
 ,p_autocomplete_on_off=>'OFF'
@@ -13936,7 +14305,6 @@ prompt --application/pages/page_00001
 begin
 wwv_flow_imp_page.create_page(
  p_id=>1
-,p_user_interface_id=>wwv_flow_imp.id(49030321967336404085)
 ,p_name=>'Home'
 ,p_alias=>'HOME'
 ,p_step_title=>'Slack Integration'
@@ -13967,7 +14335,6 @@ prompt --application/pages/page_00002
 begin
 wwv_flow_imp_page.create_page(
  p_id=>2
-,p_user_interface_id=>wwv_flow_imp.id(49030321967336404085)
 ,p_name=>'Incoming Webhook'
 ,p_alias=>'INCOMING-WEBHOOK'
 ,p_step_title=>'Incoming Webhook'
@@ -14036,12 +14403,13 @@ wwv_flow_imp_page.create_page_item(
 ,p_item_plug_id=>wwv_flow_imp.id(46047967115824606534)
 ,p_prompt=>'Text'
 ,p_display_as=>'NATIVE_RICH_TEXT_EDITOR'
-,p_cSize=>30
-,p_cHeight=>5
 ,p_field_template=>wwv_flow_imp.id(49030294414949404072)
 ,p_item_template_options=>'#DEFAULT#'
-,p_attribute_07=>'180'
-,p_attribute_09=>'MARKDOWN'
+,p_attribute_01=>'MARKDOWN'
+,p_attribute_02=>'INTERMEDIATE'
+,p_attribute_03=>'OVERFLOW'
+,p_attribute_04=>'180'
+,p_attribute_07=>'N'
 );
 wwv_flow_imp_page.create_page_process(
  p_id=>wwv_flow_imp.id(46047967617996606539)
@@ -14083,16 +14451,15 @@ prompt --application/pages/page_00003
 begin
 wwv_flow_imp_page.create_page(
  p_id=>3
-,p_user_interface_id=>wwv_flow_imp.id(49030321967336404085)
 ,p_name=>'API'
 ,p_alias=>'API'
 ,p_step_title=>'API'
 ,p_autocomplete_on_off=>'OFF'
 ,p_page_template_options=>'#DEFAULT#'
 ,p_protection_level=>'C'
-,p_page_component_map=>'17'
+,p_page_component_map=>'16'
 ,p_last_updated_by=>'MOREAUX.LOUIS@GMAIL.COM'
-,p_last_upd_yyyymmddhh24miss=>'20220919204933'
+,p_last_upd_yyyymmddhh24miss=>'20221004113131'
 );
 wwv_flow_imp_page.create_page_plug(
  p_id=>wwv_flow_imp.id(50763084492938615765)
@@ -14131,18 +14498,96 @@ wwv_flow_imp_page.create_page_button(
 ,p_icon_css_classes=>'fa-send-o'
 );
 wwv_flow_imp_page.create_page_item(
+ p_id=>wwv_flow_imp.id(46047967971059606542)
+,p_name=>'P3_SLACK_CHANNEL'
+,p_item_sequence=>10
+,p_item_plug_id=>wwv_flow_imp.id(96811359237175951832)
+,p_prompt=>'Slack Channel'
+,p_display_as=>'NATIVE_POPUP_LOV'
+,p_named_lov=>'SLACK_CHANNELS'
+,p_cSize=>30
+,p_field_template=>wwv_flow_imp.id(49030294414949404072)
+,p_item_template_options=>'#DEFAULT#'
+,p_lov_display_extra=>'NO'
+,p_attribute_01=>'POPUP'
+,p_attribute_02=>'FIRST_ROWSET'
+,p_attribute_03=>'N'
+,p_attribute_04=>'N'
+,p_attribute_05=>'N'
+);
+wwv_flow_imp_page.create_page_item(
  p_id=>wwv_flow_imp.id(50763393209757345300)
 ,p_name=>'P3_TEXT'
 ,p_item_sequence=>20
 ,p_item_plug_id=>wwv_flow_imp.id(96811359237175951832)
 ,p_prompt=>'Text'
 ,p_display_as=>'NATIVE_RICH_TEXT_EDITOR'
-,p_cSize=>30
-,p_cHeight=>5
 ,p_field_template=>wwv_flow_imp.id(49030294414949404072)
 ,p_item_template_options=>'#DEFAULT#'
-,p_attribute_07=>'180'
-,p_attribute_09=>'MARKDOWN'
+,p_attribute_01=>'MARKDOWN'
+,p_attribute_02=>'INTERMEDIATE'
+,p_attribute_03=>'OVERFLOW'
+,p_attribute_04=>'180'
+,p_attribute_07=>'N'
+);
+wwv_flow_imp_page.create_page_process(
+ p_id=>wwv_flow_imp.id(52698537007480061638)
+,p_process_sequence=>20
+,p_process_point=>'AFTER_SUBMIT'
+,p_process_type=>'NATIVE_PLSQL'
+,p_process_name=>'Send To Slack'
+,p_process_sql_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'declare',
+'    l_url_endpoint varchar2(100) := ''https://slack.com/api/chat.postMessage'';',
+'    l_response     clob;',
+'    l_text         varchar2(500);',
+'    l_obj          json_object_t;',
+'begin',
+'    l_text := replace(:P3_TEXT, ''**''   , ''*'' );',
+'    l_text := replace(l_text  , chr(10), ''\n'');',
+'    l_text := replace(l_text  , chr(13), ''\r'');',
+'    l_text := regexp_replace(l_text, ''^```[a-z]{1,}'', ''```'');',
+'    ',
+'    apex_web_service.clear_request_headers;',
+'',
+'    apex_web_service.set_request_headers(',
+'        p_name_01        => ''Content-Type'',',
+'        p_value_01       => ''application/json''',
+'    );',
+'',
+'    l_obj := json_object_t(''{}'');',
+'    l_obj.put(''channel'', :P3_SLACK_CHANNEL);',
+'    l_obj.put(''text''   , l_text           );',
+'    l_obj.put(''mrkdwn'' , true             );',
+'    ',
+'    l_response := apex_web_service.make_rest_request(',
+'        p_url => l_url_endpoint,',
+'        p_http_method => ''POST'',',
+'        p_body => l_obj.to_clob(),',
+'        p_credential_static_id => ''Credentials_for_Slack''',
+'    );',
+'',
+'    apex_debug.message(apex_web_service.g_status_code );',
+'    apex_debug.message(l_response);',
+'',
+'    if apex_web_service.g_status_code > 200 then',
+'        apex_error.add_error (',
+'            p_message          => ''Unexpected error'',',
+'            p_display_location => apex_error.c_inline_in_notification ',
+'        );',
+'    else',
+'        l_obj := json_object_t(l_response);',
+'        if l_obj.get_Boolean(''ok'') = false then',
+'            apex_error.add_error (',
+'                p_message          => ''Encountered the error: ''|| l_obj.get_String(''error''),',
+'                p_display_location => apex_error.c_inline_in_notification ',
+'            );',
+'        end if;',
+'    end if;',
+'end;'))
+,p_process_clob_language=>'PLSQL'
+,p_error_display_location=>'INLINE_IN_NOTIFICATION'
+,p_process_success_message=>'Message send.'
 );
 end;
 /
@@ -14150,7 +14595,6 @@ prompt --application/pages/page_09999
 begin
 wwv_flow_imp_page.create_page(
  p_id=>9999
-,p_user_interface_id=>wwv_flow_imp.id(49030321967336404085)
 ,p_name=>'Login Page'
 ,p_alias=>'LOGIN'
 ,p_step_title=>'Slack Integration - Log In'
